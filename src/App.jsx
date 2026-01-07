@@ -1,0 +1,248 @@
+import React, { useState, useEffect } from 'react';
+import { Search, ShoppingBag, Menu, Flame, UtensilsCrossed, Sandwich, IceCream, Zap } from 'lucide-react';
+
+const App = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Data Structure (as provided)
+  const menuData = [
+    {
+      id: 'crepe',
+      title: 'كريب حادق',
+      icon: <UtensilsCrossed size={20} />,
+      items: [
+        { name: 'كريب استربس', price: 85, desc: '' },
+        { name: 'كريب سوبر كرانشي', price: 90, desc: '' },
+        { name: 'كريب زنجر سوبريم', price: 90, desc: '' },
+        { name: 'كريب صدور فراشة', price: 105, desc: '' },
+        { name: 'كريب مسحب', price: 120, desc: '' },
+        { name: 'كريب كوردن بلو', price: 80, desc: '' },
+        { name: 'كريب كرسبي', price: 50, desc: '' },
+        { name: 'كريب بانيه', price: 50, desc: '' },
+        { name: 'كريب هوت دوج', price: 70, desc: '' },
+        { name: 'كريب برجر فريش', price: 80, desc: '' },
+        { name: 'كريب كفته فريش', price: 85, desc: '' },
+        { name: 'كريب سجق', price: 80, desc: '' },
+        { name: 'كريب ميكس جبن', price: 50, desc: '' },
+        { name: 'كريب بطاطس', price: 35, desc: '' },
+      ]
+    },
+    {
+      id: 'mixes',
+      title: 'ميكسات ليفيك',
+      icon: <Flame size={20} />,
+      items: [
+        { name: 'كريب مقلبظ', price: 95, desc: '1 كوردن بلو + استربس + شاورما' },
+        { name: 'كريب موتة', price: 200, desc: '1 استربس + قطعة كوردن + صدور فراشة + شيش + مسحب + صوص شيدر ومايونيز' },
+        { name: 'كريب ولعتين', price: 100, desc: 'مسحب + استربس + مايونيز هوت صوص' },
+        { name: 'ميكس فراخ', price: 90, desc: 'بانيه + استربس + شاورما + تركي مدخن + صوص كاتشب مايونيز' },
+        { name: 'ميكس لحوم', price: 90, desc: 'سجق + كفته + برجر + بيف مدخن + صوص تكساس ومايونيز' },
+        { name: 'جبار', price: 100, desc: 'شيش + استربس + هوت دوج + بطاطس' },
+        { name: 'ثانوس', price: 130, desc: 'استربس + كوردن + شيش + 1 بطاطس' },
+        { name: 'وش المدفع', price: 100, desc: '1 هوت دوج + كفته + بانيه + استربس + وش جبنة' },
+        { name: 'لهاليبو', price: 100, desc: 'شيش تندوري + استربس' },
+      ]
+    },
+    {
+      id: 'jumbo',
+      title: 'برجر جامبو',
+      icon: <Menu size={20} />,
+      items: [
+        { name: 'برجر لحم', price: 120, desc: 'برجر + خضار + بيف مدخن + صوص تكساس' },
+        { name: 'برجر رينجو', price: 150, desc: 'برجر + حلقات بصل + صوابع موتزاريلا + خضار + صوص تكساس' },
+        { name: 'برجر دابل هيد شوت', price: 170, desc: 'برجر + تشيكن + تركي مدخن + صوابع موتزاريلا + خضار + تكساس + شيدر' },
+      ]
+    },
+    {
+      id: 'sandwich',
+      title: 'ساندوتشات',
+      icon: <Sandwich size={20} />,
+      items: [
+        { name: 'ساندوتش برجر', price: 40, desc: '' },
+        { name: 'ساندوتش هوت دوج', price: 40, desc: '' },
+        { name: 'ساندوتش استربس', price: 25, desc: '' },
+        { name: 'ساندوتش شيش', price: 35, desc: '' },
+        { name: 'ساندوتش بانيه', price: 20, desc: '' },
+        { name: 'ساندوتش كبده', price: 15, desc: '' },
+        { name: 'ساندوتش سجق', price: 15, desc: '' },
+        { name: 'ساندوتش كفته', price: 15, desc: '' },
+      ]
+    },
+    {
+      id: 'waffle',
+      title: 'وافل & حلو',
+      icon: <IceCream size={20} />,
+      items: [
+        { name: 'ساندوتش حلو اوريو', price: 35, desc: '' },
+        { name: 'واحد حلو', price: 50, desc: 'اوريو + لوتس + شوكليت + كراميل' },
+        { name: 'ساندوتش حلو لوتس', price: 35, desc: '' },
+        { name: 'وافل شوكلت', price: 30, desc: '' },
+        { name: 'وافل وايت شوكلت', price: 35, desc: '' },
+        { name: 'وافل ميكس شوكلت', price: 40, desc: '' },
+        { name: 'وافل اوريو', price: 50, desc: '' },
+        { name: 'وافل لورانا', price: 50, desc: '' },
+      ]
+    },
+    {
+      id: 'meals',
+      title: 'وجبات',
+      icon: <ShoppingBag size={20} />,
+      items: [
+        { name: 'وجبة استربس', price: 100, desc: 'استربس + بطاطس + كيزر + صوص شيدر' },
+        { name: 'وجبة صدور فراشة', price: 120, desc: 'صدور فراشة + بطاطس + كيزر + صوص شيدر' },
+        { name: 'وجبة مسحب', price: 125, desc: 'مسحب + بطاطس + كيزر + صوص شيدر' },
+      ]
+    },
+    {
+      id: 'addons',
+      title: 'اضافات',
+      icon: <Zap size={20} />,
+      items: [
+        { name: 'باكت فارم', price: 15, desc: '' },
+        { name: 'صوص شيدر', price: 15, desc: '' },
+        { name: 'صوص تكساس', price: 15, desc: '' },
+      ]
+    }
+  ];
+
+  // Normalize search (case-insensitive)
+  const term = searchTerm.trim().toLowerCase();
+
+  const filteredData = menuData.map(category => {
+    const filteredItems = category.items.filter(item => {
+      const name = item.name.toLowerCase();
+      const desc = (item.desc || '').toLowerCase();
+      return term === '' || name.includes(term) || desc.includes(term);
+    });
+    return { ...category, items: filteredItems };
+  }).filter(category => category.items.length > 0);
+
+  // For categories navigation: if searching, show only filtered categories
+  const categoriesNav = term === '' ? menuData : filteredData;
+
+  // When search narrows the categories, update activeCategory to first available
+  useEffect(() => {
+    if (term !== '') {
+      if (filteredData.length > 0) {
+        if (!filteredData.some(c => c.id === activeCategory)) {
+          setActiveCategory(filteredData[0].id);
+        }
+      } else {
+        setActiveCategory('all');
+      }
+    }
+  }, [term, filteredData, activeCategory]);
+
+  const scrollToSection = (id) => {
+    setActiveCategory(id);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-20" dir="rtl">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 shadow-lg">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className="text-3xl font-black text-orange-500 tracking-tighter">LIVIK</h1>
+              <p className="text-xs text-slate-400 font-bold tracking-widest">RESTAURANT</p>
+            </div>
+            <div className="bg-orange-500/10 p-2 rounded-full">
+              <Flame className="text-orange-500 animate-pulse" />
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute right-3 top-3 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="بتدور على ايه؟ (برجر، كريب...)"
+              className="w-full bg-slate-800 text-white p-3 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 border border-slate-700 transition-all placeholder-slate-500 text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Categories Nav */}
+        <div className="flex overflow-x-auto hide-scrollbar px-4 pb-3 gap-3">
+          {categoriesNav.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => scrollToSection(cat.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all
+                ${activeCategory === cat.id
+                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                  : 'bg-slate-800 text-slate-300 border border-slate-700'}`}
+            >
+              {cat.icon}
+              {cat.title}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      {/* Menu Content */}
+      <main className="container mx-auto px-4 pt-6 space-y-8">
+        {filteredData.length === 0 ? (
+          <div className="text-center text-slate-500 py-20">
+            <Search size={48} className="mx-auto mb-4 opacity-50" />
+            <p>مفيش حاجة بالاسم ده يا بطل</p>
+          </div>
+        ) : (
+          filteredData.map((category) => (
+            <section key={category.id} id={category.id} className="scroll-mt-40">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                  {category.icon}
+                </div>
+                <h2 className="text-xl font-bold text-white border-b-2 border-orange-500 pb-1">{category.title}</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {category.items.map((item, index) => (
+                  <div key={index} className="group bg-slate-800 rounded-2xl p-4 border border-slate-700/50 relative overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    {/* Decorative background element */}
+                    <div className="absolute -right-6 -top-6 w-20 h-20 bg-orange-500/5 rounded-full blur-xl group-hover:bg-orange-500/10 transition-all"></div>
+
+                    <div className="flex justify-between items-start gap-4 relative z-10">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-slate-100 mb-1">{item.name}</h3>
+                        {item.desc && (
+                          <p className="text-xs text-slate-400 leading-relaxed mb-2">{item.desc}</p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-orange-400 font-black text-lg">{item.price}</span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase">جنية</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-12 bg-slate-950 py-8 border-t border-slate-800 text-center">
+        <h2 className="text-2xl font-black text-slate-700 mb-2">LIVIK</h2>
+        <p className="text-slate-500 text-sm mb-4">أقوى طعم في الزون</p>
+        <div className="flex justify-center gap-4 text-slate-600">
+          <span>📞 01030354232</span>
+          <span>🛵 تيك اواي</span>
+          <span>🍽️ صالة</span>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
